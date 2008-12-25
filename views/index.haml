@@ -1,7 +1,7 @@
 %h1 Sovereign
 :javascript
   $(function(){
-    FB.init("6510ca6b2168ec71d331037888bbc591", "/xd_receiver.htm"); 
+
   });
 %fieldset
   %legend
@@ -29,3 +29,5 @@
       Myspace Connect
     %input#myspace{'type' => 'radio', 'name' => 'auth_provider', 'value' => 'myspace'}
 %fb:login-button#facebook_login
+:javascript
+	FB.init("6510ca6b2168ec71d331037888bbc591", "/xd_receiver.htm"); 
