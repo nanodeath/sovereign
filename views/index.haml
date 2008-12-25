@@ -1,5 +1,13 @@
 %h1 Sovereign
-:javascript
+    
+:plain
+  <!-- Include the Google Friend Connect javascript library. -->
+  <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js"></script>
+  
+  <!-- Define the div tag where the gadget will be inserted. -->
+  <div id="div-1230181007262" style="width:282px;border:1px solid #cccccc;"></div>
+  <!-- Render the gadget into a div. -->
+  <script type="text/javascript">
   var skin = {};
   skin['BORDER_COLOR'] = '#cccccc';
   skin['ENDCAP_BG_COLOR'] = '#e0ecff';
@@ -15,11 +23,11 @@
   skin['ALIGNMENT'] = 'right';
   google.friendconnect.container.setParentUrl('/' /* location of rpc_relay.html and canvas.html */);
   google.friendconnect.container.renderSignInGadget(
-    {
-      id: 'div-1230179304317',
-      site: '05320559567163637664'
-    },
+   { id: 'div-1230181007262',
+     site: '05320559567163637664'},
     skin);
+  </script>
+
 %fieldset
   %legend
     Welcome to Sovereign
@@ -45,4 +53,3 @@
     %label{'for' => 'myspace'}
       Myspace Connect
     %input#myspace{'type' => 'radio', 'name' => 'auth_provider', 'value' => 'myspace'}
-#div-1230179304317{'style' => 'width:282px;border:1px solid #cccccc;'}
