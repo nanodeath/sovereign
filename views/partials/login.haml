@@ -1,0 +1,36 @@
+%fieldset
+  %legend
+    Welcome to Sovereign
+  %h2
+    Credentials
+  #login_message
+  %form{'id' => 'login_form', 'method' => 'post', 'action' => '/session/new'}
+    .form_row
+      %label{'for' => 'login'}
+        Login
+      %input#login{'type' => 'text', 'name' => 'login'}
+    .form_row
+      %label{'for' => 'password'}
+        Password
+      %input#password{'type' => 'password', 'name' => 'password'}
+    .form_row
+      %input#submit{'type' => 'submit', 'value' => 'Login/Register'}
+.jqmWindow#register_modal
+  %h1
+    Register
+  %p We need one more thing from you...
+  %form{'id' => 'register_form', 'method' => 'post', 'action' => '/user/new'}
+    .form_row
+      %label{'for' => 'register_login'}
+        Login
+      %input#register_login{'type' => 'text', 'name' => 'login', 'readonly' => 'readonly'}
+    .form_row
+      %label{'for' => 'register_password'}
+        Password
+      %input#register_password{'type' => 'password', 'name' => 'password', 'readonly' => 'readonly'}
+    .form_row
+      %label{'for' => 'email'}
+        Email
+      %input#register_email{'type' => 'text', 'name' => 'email'}
+    .form_row
+      %input#register_submit{'type' => 'submit', 'value' => 'Register'}
