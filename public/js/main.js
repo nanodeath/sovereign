@@ -31,7 +31,7 @@ $(function(){
       success: function(response){
         if (response.status == 'ok') {
           $("#register_modal").jqmHide();
-          
+          initializePage();
         } else {
           alert("try again");
         }
