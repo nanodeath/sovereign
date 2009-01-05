@@ -1,2 +1,36 @@
 = haml '/partials/logged_in'.to_sym, :layout => false
-Face
+= haml '/partials/header'.to_sym, :layout => false
+
+%h1== Hi #{@user.username}
+
+- if @provinces.length > 1
+  %div
+    %h1 Your Kingdom
+- else 
+  %div#province_summary
+    %h1 Your Province
+  
+%div#people_summary
+  %h1
+    Your People
+  %h2
+    Population
+  %div
+    == Men: #{@provinces.first.population.men.sum.inspect}
+  %div
+    == Women: #{@provinces.first.population.women.sum.inspect}
+  %div
+    == Boys: #{@provinces.first.population.boys.sum.inspect}
+  %div
+    == Girls: #{@provinces.first.population.girls.sum.inspect}
+  %div
+    == Bebbies: #{@provinces.first.population.bebbies.sum.inspect}
+  
+%div#land_summary
+  %h1 Your Land
+  
+%div#neighbors_summary
+  %h1 Your Neighbors
+
+%div#wars_summary
+  %h1 Your Wars

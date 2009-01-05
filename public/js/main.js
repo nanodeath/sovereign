@@ -1,17 +1,21 @@
 $(function(){
   var submitted_login;
   var submitted_password;
-  var login = $.cookie('user_username');
+  var login = null;
   
   
   function initializePage(){
-    if ($.cookie('logged_in') == 'true') {
-      console.info("you are logged in");
-      loadKingdom();
-    } else {
-      console.info('you are not logged in');
-      $("#canvas").load("/_login");
-    }
+    $.getJSON("/login_status", function(ret){
+      login = login || ret.user_username;
+      
+      if(ret.user_id){
+        console.info("you are logged in");
+        loadKingdom();
+      } else {
+        console.info('you are not logged in');
+        $("#canvas").load("/_login");
+      }
+    })
   }
   initializePage();
   
@@ -90,14 +94,30 @@ $(function(){
     }
     
     $("#sign_out").click(function(){
-      $.cookie('logged_in', null);
-      initializePage();
+      $.ajax({
+        type: 'POST',
+        url: '/session/sign_out',
+        dataType: 'json',
+        success: function(ret){
+          if(ret.status == 'ok'){
+            initializePage();          
+          }
+        }
+      });
     });
     
     $("#sign_out_completely").click(function(){
-      $.cookie('logged_in', null);
-      $.cookie('user_username', null);
-      initializePage();
+      $.ajax({
+        type: 'POST',
+        url: '/session',
+        dataType: 'json',
+        data: {'_method': 'DELETE'},
+        success: function(ret){
+          if(ret.status == 'ok'){
+            initializePage();          
+          }
+        }
+      });
     });
   });
 });
