@@ -24,3 +24,15 @@ configure do
 
   CouchRest::Model.default_database = CouchRest.database!('http://localhost:5984/sovereign')
 end
+
+class Array
+  def sum
+    inject {|sum, n| sum + (n || 0)} || 0
+  end
+
+  # Sum two numeric arrays
+  def add(other_array)
+    raise ArgumentError unless other_array.is_a? Array
+    (length > other_array.length ? zip(other_array) : other_array.zip(self)).collect(&:sum)
+  end
+end

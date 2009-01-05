@@ -2,6 +2,7 @@ $(function(){
   var submitted_login;
   var submitted_password;
   var login = null;
+  var province = null;
   
   
   function initializePage(){
@@ -10,7 +11,13 @@ $(function(){
       
       if(ret.user_id){
         console.info("you are logged in");
-        loadKingdom();
+        if(ret.province){
+          province = ret.province;
+          loadProvince();
+        } else {
+          loadKingdom();
+        }
+        
       } else {
         console.info('you are not logged in');
         $("#canvas").load("/_login");
@@ -22,6 +29,20 @@ $(function(){
   function loadKingdom(page){
     if (!page) page = 'your';
     $("#canvas").load("/kingdom/" + page);
+  }
+
+  function loadProvince(page){
+    if (!page) page = 'summary';
+    $.ajax({
+      url: "/province/" + page,
+      data: {
+        province: province
+      },
+      method: 'get',
+      success: function(response){
+        $("#canvas").html(response);
+      }
+    });
   }
   
   $(document).ajaxComplete(function(event, xhr, ajaxOptions){
@@ -54,7 +75,12 @@ $(function(){
           $("#login_message").html("<p>Login successful.</p>").removeClass('failure').addClass('success').show();
           $("#login_form #login").val("");
           setTimeout(function(){
-            loadKingdom();
+            if(response.province){
+              province = response.province;
+              loadProvince(province);
+            } else {
+              loadKingdom();
+            }
           }, 500);
         } else {
           var reason = "";
@@ -100,7 +126,7 @@ $(function(){
         dataType: 'json',
         success: function(ret){
           if(ret.status == 'ok'){
-            initializePage();          
+            initializePage();
           }
         }
       });
@@ -111,11 +137,27 @@ $(function(){
         type: 'POST',
         url: '/session',
         dataType: 'json',
-        data: {'_method': 'DELETE'},
+        data: {
+          '_method': 'DELETE'
+        },
         success: function(ret){
           if(ret.status == 'ok'){
-            initializePage();          
+            initializePage();
           }
+        }
+      });
+    });
+
+    $("ul.header_links.province a").click(function(){
+      page = $(this).attr("rel");
+      $.ajax({
+        type: 'GET',
+        url: '/province/' + page,
+        data:  {
+          province: province
+        },
+        success: function(response){
+          $("#canvas").html(response);
         }
       });
     });

@@ -3,12 +3,12 @@
 
 %h1== Hi #{@user.username}
 
-- if @provinces.length > 1
+- if @province.nil?
   %div
     %h1 Your Kingdom
 - else 
   %div#province_summary
-    %h1 Your Province
+    %h1== Province #{@province.name}
   
 %div#people_summary
   %h1
@@ -28,6 +28,19 @@
   
 %div#land_summary
   %h1 Your Land
+  %div
+    %h2 Your Buildings
+    %ul
+      - @provinces.first.buildings.all.each_pair do |b,q|
+        %li== #{b}: #{q}
+
+  %div
+    %h2 Your Build Queue
+    %ol
+      - if @provinces.first.buildings.build_queue.length == 0
+        Currently empty
+      - @provinces.first.buildings.build_queue.each do |(type, quantity)|
+        %li== #{type}: #{quantity}
   
 %div#neighbors_summary
   %h1 Your Neighbors

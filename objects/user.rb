@@ -10,7 +10,7 @@ class User < CouchRest::Model
   key_reader :created_at, :updated_at
   
   def kingdom
-    Kingdom.by_user_id(:key => id).first
+    @kingdom ||= Kingdom.by_user_id(:key => id).first
   end
   
   view_by :username
@@ -38,7 +38,6 @@ class User < CouchRest::Model
   
   def self.current_user(context)
     id = context.session[:user_id]
-    puts "session is #{context.session.inspect}"
     id.nil? ? nil : get(id)
   end
 
@@ -143,7 +142,17 @@ class User < CouchRest::Model
   def self.routes
     Sinatra.application do |app|
       app.get '/login_status' do
-        json :user_id => session[:user_id], :user_username => session[:user_username]
+        ret = {:user_id => session[:user_id], :user_username => session[:user_username]}
+        unless session[:user_id].nil?
+          user = User.get(session[:user_id])
+          unless user.nil?
+            provinces = user.kingdom.provinces
+            if provinces.length == 1
+              ret[:province] = provinces.first.id
+            end
+          end
+        end
+        json ret
       end
 
       app.post '/session/sign_out' do
@@ -158,8 +167,13 @@ class User < CouchRest::Model
 
       app.post '/session/new' do
         begin
-          User.sign_in(params, self)
-          report_completion('login')
+          user = User.sign_in(params, self)
+          provinces = user.kingdom.provinces
+          if provinces.length == 1
+            report_completion('login', nil, :province => provinces.first.id)
+          else
+            report_completion('login')
+          end
         rescue User::LoginOrRegisterException => e
           report_completion('login', e.to_s)
         end

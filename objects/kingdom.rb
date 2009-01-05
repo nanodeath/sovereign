@@ -3,6 +3,10 @@ class Kingdom < CouchRest::Model
   
   key_accessor :user_id
   view_by :user_id
+
+  def user
+    @user ||= User.get(user_id)
+  end
   
   def provinces
     Province.by_kingdom_id(:key => id)

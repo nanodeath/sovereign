@@ -16,12 +16,13 @@ get '/' do
 end
 
 helpers do
-  def report_completion(operation, error_message=nil)
+  def report_completion(operation, error_message=nil, additional={})
     if(error_message.nil? or error_message == '')
-      json :operation => operation, :status => 'ok'
+      ret = {:operation => operation, :status => 'ok'}
     else
-      json :operation => operation, :status => 'fail', :message => error_message
+      ret = {:operation => operation, :status => 'fail', :message => error_message}
     end
+    json ret.merge(additional)
   end
 
   def json(hash)
