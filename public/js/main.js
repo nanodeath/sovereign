@@ -77,7 +77,7 @@ $(function(){
           setTimeout(function(){
             if(response.province){
               province = response.province;
-              loadProvince(province);
+              loadProvince();
             } else {
               loadKingdom();
             }
