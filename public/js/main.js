@@ -45,13 +45,70 @@ $(function(){
       }
     });
   }
-  
+
+  function renderPage(page){
+    $(document).trigger('render_page_' + page);
+  }
+
+  $(document).bind('page_land', function(event){
+    $(".buildings input[type='button'].add_to_queue").click(function(){
+      var data = $(".buildings input[type='text'].add_to_queue").serializeArray();
+      $.ajax({
+        type: 'POST',
+        url: '/province/land/buildings',
+        dataType: 'json',
+        data: {
+          build_queue: data,
+          province: province
+        }
+      });
+    });
+  });
+
+  var boundOperations = new Object;
+
+  function bindOperation(operation, status, callback){
+    if(!boundOperations[operation]){
+      boundOperations[operation] = new Object;
+    }
+    boundOperations[operation][status] = true
+    $(document).bind('operation_' + operation + '_' + status, callback)
+  }
+
+  function isOperationBound(operation, status){
+    return boundOperations[operation] && boundOperations[operation][status] === true;
+  }
+
+  bindOperation('add_to_building_queue', 'ok', function(event, response){
+    $("div.buildings").html(response.html);
+    renderPage(response.page);
+  });
+
+
   $(document).ajaxComplete(function(event, xhr, ajaxOptions){
     var setCookie = xhr.getResponseHeader('Set-Cookie');
     if (setCookie != '') {
       document.cookie = setCookie;
     }
-    
+
+    var reattach_all_events = true;
+
+    if(ajaxOptions.dataType == 'json'){
+      json = eval("(" + xhr.responseText + ")");
+
+      if(json.reload_page === 'no'){
+        reattach_all_events = false;
+      }
+      if(json.operation){
+        $(document).trigger('operation_' + json.operation + '_' + json.status, [json]);
+        reattach_all_events = false;
+      }
+    }
+
+    if(!reattach_all_events) {
+      return;
+    }
+
     $("#register_form").ajaxForm({
       dataType: 'json',
       success: function(response){

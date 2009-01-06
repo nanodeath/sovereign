@@ -70,6 +70,17 @@ class Province < CouchRest::Model
       @build_queue[category]
     end
 
+    def get_with_order(category)
+      queue = get(category)
+      ordered_queue = {}
+      i = 1
+      queue.each do |(building, quantity)|
+        ordered_queue[building] = [quantity, i]
+        i += 1
+      end
+      ordered_queue
+    end
+
     alias [] get
   end
   
@@ -163,7 +174,17 @@ class Province < CouchRest::Model
         @province = Province.get(params[:province])
         @province.validate_owner(session[:user_id])
         @buildings = @province.buildings
+        @build_queue = @province.build_queue.get_with_order(:buildings)
         haml :'/province/land', :layout => false
+      end
+
+      app.post '/province/land/buildings' do
+        @province = Province.get(params[:province])
+        @province.validate_owner(session[:user_id])
+        @buildings = @province.buildings
+        @build_queue = @province.build_queue.get_with_order(:buildings)
+        puts params.inspect
+        report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'land')
       end
     end
   end

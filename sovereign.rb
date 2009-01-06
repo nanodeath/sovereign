@@ -8,7 +8,7 @@ load 'configure.rb'
 
 # load objects
 Dir[File.dirname(__FILE__) + '/objects/*.rb'].each do |file|
-  load file
+  require file
 end
 
 get '/' do
@@ -32,9 +32,9 @@ helpers do
   end
 end
 
-get '/css/:sass_file.sass' do
+get '/css/:sass.sass' do
   content_type 'text/css', :charset => 'utf-8'
-  sass "/sass/#{params[:sass_file]}".to_sym
+  sass "/sass/#{params[:sass]}".to_sym
 end
 
 get '/_:partial' do

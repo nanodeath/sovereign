@@ -1,0 +1,20 @@
+%table
+  - @buildings.all.each_pair do |building_type, building_quantity|
+    %tr
+      %th= building_type
+      %td= building_quantity
+      - if @build_queue[building_type].nil?
+        %td= 0
+      - else
+        %td
+          =@build_queue[building_type][0]
+          %sup
+            =@build_queue[building_type][1]
+      %td
+        %input.add_to_queue{:type => :text, :maxlength => building_quantity.to_s.length, :name => 'building_type_' + building_type.to_s}
+  %tr
+    %td
+    %td
+    %td
+    %td
+      %input.add_to_queue{:type => :button, :value => 'Build'}
