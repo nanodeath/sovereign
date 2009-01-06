@@ -1,0 +1,43 @@
+= haml :'/partials/logged_in', :layout => false
+= haml :'/province/header', :layout => false
+
+%div#province_summary
+  %h1== Province #{@province.name}
+
+%div#people_summary
+  %h1
+    Your People
+  %h2
+    Population
+  %div
+    == Men: #{@province.population.men.sum.inspect}
+  %div
+    == Women: #{@province.population.women.sum.inspect}
+  %div
+    == Boys: #{@province.population.boys.sum.inspect}
+  %div
+    == Girls: #{@province.population.girls.sum.inspect}
+  %div
+    == Bebbies: #{@province.population.bebbies.sum.inspect}
+
+%div#land_summary
+  %h1 Your Land
+  %div
+    %h2 Your Buildings
+    %ul
+      - @province.buildings.all.each_pair do |b,q|
+        %li== #{b}: #{q}
+
+  %div
+    %h2 Your Build Queue
+    %ol
+      - if @province.buildings.build_queue.length == 0
+        Currently empty
+      - @province.buildings.build_queue.each do |(type, quantity)|
+        %li== #{type}: #{quantity}
+
+%div#neighbors_summary
+  %h1 Your Neighbors
+
+%div#wars_summary
+  %h1 Your Wars

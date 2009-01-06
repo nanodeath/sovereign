@@ -1,0 +1,12 @@
+%ul.header_links.province
+  %li
+    %a#province{:href => '#', :rel => 'summary'} Province Summary
+      
+  %li
+    %a#people{:href => '#', :rel => 'people'}== People in #{@province.name}
+      
+  %li
+    %a#land{:href => '#', :rel => 'land'}== #{@province.name} Land
+      
+  %li
+    %a#neighbors{:href => '#', :rel => 'neighbors'}== Neighbors of #{@province.name}

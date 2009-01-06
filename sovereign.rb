@@ -8,7 +8,7 @@ load 'configure.rb'
 
 # load objects
 Dir[File.dirname(__FILE__) + '/objects/*.rb'].each do |file|
-  require file
+  load file
 end
 
 get '/' do

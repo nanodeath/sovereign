@@ -15,6 +15,7 @@ $(function(){
           province = ret.province;
           loadProvince();
         } else {
+          province = null;
           loadKingdom();
         }
         
@@ -79,6 +80,7 @@ $(function(){
               province = response.province;
               loadProvince();
             } else {
+              province = null;
               loadKingdom();
             }
           }, 500);

@@ -1,0 +1,19 @@
+= haml :'/partials/logged_in', :layout => false
+= haml :'/province/header', :layout => false
+
+%div#province_summary
+  %h1== Province #{@province.name}
+
+%div#people_summary
+  %h1
+    Your Land
+  %h2
+    Buildings
+  %div.buildings
+    %table
+      - @buildings.all.each_pair do |building_type, building_quantity|
+        %tr
+          %th= building_type
+          %td= building_quantity
+          %td
+            %input{:type => :text, :maxlength => building_quantity.to_s.length}

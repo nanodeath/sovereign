@@ -1,0 +1,25 @@
+= haml :'/partials/logged_in', :layout => false
+= haml :'/province/header', :layout => false
+
+%div#province_summary
+  %h1== Province #{@province.name}
+
+%div#people_summary
+  %h1
+    Your People
+  %h2
+    Population
+  %div
+    %table
+      %tr
+        %th Age
+        - (0...[@population.males.length, @population.females.length].max).each do |i|
+          %th= i
+      %tr
+        %th Men
+        - (0...@population.males.length).each do |i|
+          %td= @population.males[i]
+      %tr
+        %th Women
+        - (0...@population.females.length).each do |i|
+          %td= @population.females[i]
