@@ -1,6 +1,4 @@
 class Province < CouchRest::Model
-  include Sinatra::Application::Model
-
   BABY_AGE = 0..4
   CHILD_AGE = 5..15
   ADULT_AGE = 16..50
@@ -155,42 +153,38 @@ class Province < CouchRest::Model
     end
   end
 
-  def self.routes
-    Sinatra.application do |app|
-      app.get '/province/summary' do
-        @province = Province.get(params[:province])
-        @province.validate_owner(session[:user_id])
-        haml :'/province/summary', :layout => false
-      end
-
-      app.get '/province/people' do
-        @province = Province.get(params[:province])
-        @province.validate_owner(session[:user_id])
-        @population = @province.population
-        haml :'/province/people', :layout => false
-      end
-
-      app.get '/province/land' do
-        @province = Province.get(params[:province])
-        @province.validate_owner(session[:user_id])
-        @buildings = @province.buildings
-        @build_queue = @province.build_queue.get_with_order(:buildings)
-        haml :'/province/land', :layout => false
-      end
-
-      app.post '/province/land/buildings' do
-        @province = Province.get(params[:province])
-        @province.validate_owner(session[:user_id])
-        @buildings = @province.buildings
-        @build_queue = @province.build_queue.get_with_order(:buildings)
-        puts params.inspect
-        report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'land')
-      end
-    end
-  end
-
   def validate_owner(user_id)
     @user = User.get(user_id)
     raise if @user.nil? or kingdom.user_id != @user.id
   end
+end
+
+get '/province/summary' do
+  @province = Province.get(params[:province])
+  @province.validate_owner(session[:user_id])
+  haml :'/province/summary', :layout => false
+end
+
+get '/province/people' do
+  @province = Province.get(params[:province])
+  @province.validate_owner(session[:user_id])
+  @population = @province.population
+  haml :'/province/people', :layout => false
+end
+
+get '/province/land' do
+  @province = Province.get(params[:province])
+  @province.validate_owner(session[:user_id])
+  @buildings = @province.buildings
+  @build_queue = @province.build_queue.get_with_order(:buildings)
+  haml :'/province/land', :layout => false
+end
+
+post '/province/land/buildings' do
+  @province = Province.get(params[:province])
+  @province.validate_owner(session[:user_id])
+  @buildings = @province.buildings
+  @build_queue = @province.build_queue.get_with_order(:buildings)
+  puts params.inspect
+  report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'land')
 end

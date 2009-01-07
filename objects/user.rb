@@ -1,8 +1,6 @@
 require 'digest/sha1'
 
 class User < CouchRest::Model
-  include Sinatra::Application::Model
-
   USERNAME_PATTERN = /[^a-zA-Z]/
 
   key_reader :username, :salt, :password_hash, :email
@@ -139,57 +137,54 @@ class User < CouchRest::Model
     end
   end
 
-  def self.routes
-    Sinatra.application do |app|
-      app.get '/login_status' do
-        ret = {:user_id => session[:user_id], :user_username => session[:user_username]}
-        unless session[:user_id].nil?
-          user = User.get(session[:user_id])
-          unless user.nil?
-            provinces = user.kingdom.provinces
-            if provinces.length == 1
-              ret[:province] = provinces.first.id
-            end
-          end
-        end
-        json ret
-      end
+end
 
-      app.post '/session/sign_out' do
-        session.delete(:user_id)
-        json :status => 'ok'
-      end
-
-      app.delete '/session' do
-        session.clear
-        json :status => 'ok', :noob => true
-      end
-
-      app.post '/session/new' do
-        begin
-          user = User.sign_in(params, self)
-          provinces = user.kingdom.provinces
-          if provinces.length == 1
-            report_completion('login', nil, :province => provinces.first.id)
-          else
-            report_completion('login')
-          end
-        rescue User::LoginOrRegisterException => e
-          report_completion('login', e.to_s)
-        end
-      end
-
-      app.post '/user/new' do
-        begin
-          user = User.create_new(params, self)
-          user.setup_user
-          report_completion('register')
-        rescue User::RegisterException => e
-          report_completion('register', e.to_s)
-        rescue User::LoginOrRegisterException => e
-          report_completion('register', e.to_s)
-        end
+get '/login_status' do
+  ret = {:user_id => session[:user_id], :user_username => session[:user_username]}
+  unless session[:user_id].nil?
+    user = User.get(session[:user_id])
+    unless user.nil?
+      provinces = user.kingdom.provinces
+      if provinces.length == 1
+        ret[:province] = provinces.first.id
       end
     end
+  end
+  json ret
+end
+
+post '/session/sign_out' do
+  session.delete(:user_id)
+  json :status => 'ok'
+end
+
+delete '/session' do
+  session.clear
+  json :status => 'ok', :noob => true
+end
+
+post '/session/new' do
+  begin
+    user = User.sign_in(params, self)
+    provinces = user.kingdom.provinces
+    if provinces.length == 1
+      report_completion('login', nil, :province => provinces.first.id)
+    else
+      report_completion('login')
+    end
+  rescue User::LoginOrRegisterException => e
+    report_completion('login', e.to_s)
+  end
+end
+
+post '/user/new' do
+  begin
+    user = User.create_new(params, self)
+    user.setup_user
+    report_completion('register')
+  rescue User::RegisterException => e
+    report_completion('register', e.to_s)
+  rescue User::LoginOrRegisterException => e
+    report_completion('register', e.to_s)
   end
 end

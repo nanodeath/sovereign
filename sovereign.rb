@@ -8,7 +8,7 @@ load 'configure.rb'
 
 # load objects
 Dir[File.dirname(__FILE__) + '/objects/*.rb'].each do |file|
-  require file
+  load file
 end
 
 get '/' do
@@ -38,7 +38,7 @@ get '/css/:sass.sass' do
 end
 
 get '/_:partial' do
-  haml "/partials/#{params[:partial]}".to_sym, :layout => false
+  report_completion(params[:partial], nil, :html => haml("/partials/#{params[:partial]}".to_sym, :layout => false))
 end
 
 # load routes

@@ -22,6 +22,10 @@ $(function(){
       } else {
         console.info('you are not logged in');
         $("#canvas").load("/_login");
+
+        $.getJSON('/_login', function(json){
+          $("#canvas").html(json.html)
+        });
       }
     })
   }
@@ -46,11 +50,44 @@ $(function(){
     });
   }
 
-  function renderPage(page){
-    $(document).trigger('render_page_' + page);
-  }
+  var PageManager = new (function(){
+    var pm = this;
+    var boundOperations = new Object;
 
-  $(document).bind('page_land', function(event){
+    this.bindOperation = function(operation, status, callback){
+      if(!boundOperations[operation]){
+        boundOperations[operation] = new Object;
+      }
+      boundOperations[operation][status] = true;
+      $(pm).bind('operation_' + operation + '_' + status, callback);
+    }
+
+    this.isOperationBound = function(operation, status){
+      return boundOperations[operation] && boundOperations[operation][status] === true;
+    }
+
+    this.triggerOperation = function(operation, status, data){
+      $(pm).trigger('operation_' + operation + '_' + status, data);
+    }
+
+
+    var boundPages = new Object;
+    this.bindPage = function(page, callback){
+      boundPages[page] = true;
+      $(pm).bind('page_'+page, callback);
+    }
+    this.isPageBound = function(page){
+      return boundPages[page] === true;
+    }
+
+    this.triggerPage = function(page, data){
+      $(pm).trigger('page_' + page, data);
+    }
+  });
+
+
+  
+  PageManager.bindPage('province_land', function(event){
     $(".buildings input[type='button'].add_to_queue").click(function(){
       var data = $(".buildings input[type='text'].add_to_queue").serializeArray();
       $.ajax({
@@ -65,50 +102,11 @@ $(function(){
     });
   });
 
-  var boundOperations = new Object;
-
-  function bindOperation(operation, status, callback){
-    if(!boundOperations[operation]){
-      boundOperations[operation] = new Object;
-    }
-    boundOperations[operation][status] = true
-    $(document).bind('operation_' + operation + '_' + status, callback)
-  }
-
-  function isOperationBound(operation, status){
-    return boundOperations[operation] && boundOperations[operation][status] === true;
-  }
-
-  bindOperation('add_to_building_queue', 'ok', function(event, response){
+  PageManager.bindOperation('add_to_building_queue', 'ok', function(event, response){
     $("div.buildings").html(response.html);
-    renderPage(response.page);
   });
 
-
-  $(document).ajaxComplete(function(event, xhr, ajaxOptions){
-    var setCookie = xhr.getResponseHeader('Set-Cookie');
-    if (setCookie != '') {
-      document.cookie = setCookie;
-    }
-
-    var reattach_all_events = true;
-
-    if(ajaxOptions.dataType == 'json'){
-      json = eval("(" + xhr.responseText + ")");
-
-      if(json.reload_page === 'no'){
-        reattach_all_events = false;
-      }
-      if(json.operation){
-        $(document).trigger('operation_' + json.operation + '_' + json.status, [json]);
-        reattach_all_events = false;
-      }
-    }
-
-    if(!reattach_all_events) {
-      return;
-    }
-
+  PageManager.bindPage('frontpage', function(){
     $("#register_form").ajaxForm({
       dataType: 'json',
       success: function(response){
@@ -120,7 +118,7 @@ $(function(){
         }
       }
     });
-    
+
     $("#login_form").ajaxForm({
       dataType: 'json',
       beforeSubmit: function(){
@@ -171,13 +169,15 @@ $(function(){
         }
       }
     });
-    
+
     $('#register_modal').jqm();
-    
+
     if (login && $("#login_form #login").val() == '') {
       $("#login_form #login").val(login);
     }
-    
+  });
+
+  PageManager.bindPage('signed_in_header', function(){
     $("#sign_out").click(function(){
       $.ajax({
         type: 'POST',
@@ -190,7 +190,7 @@ $(function(){
         }
       });
     });
-    
+
     $("#sign_out_completely").click(function(){
       $.ajax({
         type: 'POST',
@@ -220,5 +220,35 @@ $(function(){
         }
       });
     });
+  });
+
+  $(document).ajaxComplete(function(event, xhr, ajaxOptions){
+    var setCookie = xhr.getResponseHeader('Set-Cookie');
+    if (setCookie != '') {
+      document.cookie = setCookie;
+    }
+
+    var reattach_all_events = true;
+
+    if(ajaxOptions.dataType == 'json'){
+      json = eval("(" + xhr.responseText + ")");
+
+      if(json.reload_page === 'no'){
+        reattach_all_events = false;
+      }
+      if(json.operation){
+        PageManager.triggerOperation(json.operation, [json]);
+        if(json.page){
+          PageManager.triggerPage(json.page);
+        }
+        reattach_all_events = false;
+      }
+    }
+
+    if(!reattach_all_events) {
+      return;
+    }
+    PageManager.triggerPage('signed_in_header');
+    
   });
 });
