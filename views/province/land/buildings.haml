@@ -1,13 +1,12 @@
-%table
+%div.ui-helper-clearfix
   - @kingdom.buildings_available.to_hash.each_pair do |building_type, building_quantity|
   - building = Building.new(building_type)
   - queue_count = @build_queue[building_type].nil? ? [0, 0] : [@build_queue[building_type][0], @build_queue[building_type][1]]
   - can_be_built_on = building.buildable_on.to_a.join(',')
   - next if can_be_built_on == ''
-    %tr
-      %td
-        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :can_be_built_on => can_be_built_on, :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}
-        %div{:style => "margin:auto auto"}
-          =queue_count[0]
-          %sup
-            =queue_count[1]
+    %div{:style => 'float:left'}
+      %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :can_be_built_on => can_be_built_on, :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}
+      %div{:style => "margin:auto auto"}
+        =queue_count[0]
+        %sup
+          =queue_count[1]

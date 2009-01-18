@@ -1,21 +1,5 @@
-%table
+%div.ui-helper-clearfix
   - @kingdom.buildings_available.to_hash.merge(@buildings.all).each_pair do |building_type, building_quantity|
   - building = Building.new(building_type)
-    %tr
-      %td
-        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}
-      - if @build_queue[building_type].nil?
-        %td= 0
-      - else
-        %td
-          =@build_queue[building_type][0]
-          %sup
-            =@build_queue[building_type][1]
-      %td
-        %input.add_to_queue{:type => :text, :maxlength => building_quantity.to_s.length, :name => 'building_type_' + building_type.to_s}
-  %tr
-    %td
-    %td
-    %td
-    %td
-      %input.add_to_queue{:type => :button, :value => 'Build'}
+    %div{:style => 'float:left;'}
+      %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}

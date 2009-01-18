@@ -190,6 +190,11 @@ post '/province/land/buildings' do
   @province.validate_owner(session[:user_id])
   @buildings = @province.buildings
   @build_queue = @province.build_queue.get_with_order(:buildings)
-  puts params.inspect
   report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'province_land')
+end
+
+get '/province/header' do
+  @province = Province.get(params[:province])
+  @province.validate_owner(session[:user_id])
+  report_completion('province_header', nil, :html => (haml :'/province/header', :layout => false), :page => 'province_all')
 end

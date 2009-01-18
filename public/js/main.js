@@ -20,14 +20,10 @@ $(function(){
         province: province
       },
       method: 'get',
-      dataType: 'json',
-      success: function(response){
-      //        $("#canvas").html(response);
-      //        PageManager.triggerPage('province_' + page, response);
-
-      //        PageManager.triggerPage('signed_in_header');
-      }
+      dataType: 'json'
     });
+    $.getJSON('/_logged_in', {province: province});
+    $.getJSON('/province/header', {province: province});
   }
 
   var PageManager = new (function(){
@@ -52,7 +48,6 @@ $(function(){
         console.info("Operation triggered: " + operation + ', ' + status);
       } else {
         console.error("Operation NOT triggered: " + operation + ', ' + status);
-        console.log(status);
       }
     }
 
@@ -79,6 +74,14 @@ $(function(){
   PageManager.bindPage('province_people', function(event, json){
     $("#canvas").html(json.html);
   });
+
+  PageManager.bindPage('province_all', function(event, json){
+
+  });
+
+  PageManager.bindOperation('province_header', 'ok', function(event, json){
+    $("#menu_bar").html(json.html);
+  })
   
   PageManager.bindPage('province_land', function(event, json){
     $("#canvas").html(json.html);
@@ -307,6 +310,10 @@ $(function(){
     PageManager.triggerPage('navigation_links_header');
   });
 
+  PageManager.bindOperation('logged_in', 'ok', function(event, json){
+    $("#logged_in").html(json.html)
+  });
+
   PageManager.bindPage('navigation_links_header', function(){
     $("ul.header_links.province a").click(function(){
       page = $(this).attr("rel");
@@ -316,10 +323,7 @@ $(function(){
         data:  {
           province: province
         },
-        dataType: 'json',
-        success: function(json){
-        //          PageManager.triggerPage("province_" + page, json);
-        }
+        dataType: 'json'
       });
     });
   });
