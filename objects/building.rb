@@ -2,19 +2,22 @@ class Building
   HOME = :home
   FARM = :farm
   BARREN = :barren
+  FERTILE = :fertile
 
   BUILDING_PICTURES = {
     HOME => 'home',
     FARM => 'farm_blueprint',
-    BARREN => 'barren'
+    BARREN => 'barren',
+    FERTILE => 'fertile'
   }
 
   BUILDABLE_ON = {
     HOME => [
-      BARREN
+      BARREN,
+      FERTILE
     ],
     FARM => [
-      BARREN
+      FERTILE
     ]
   }
 

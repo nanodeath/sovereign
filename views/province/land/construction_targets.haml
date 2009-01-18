@@ -2,9 +2,8 @@
   - @kingdom.buildings_available.to_hash.merge(@buildings.all).each_pair do |building_type, building_quantity|
   - building = Building.new(building_type)
     %tr
-      %th= building_type
       %td
-        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :building => building_type.to_s}
+        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}
       - if @build_queue[building_type].nil?
         %td= 0
       - else

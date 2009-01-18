@@ -1,24 +1,13 @@
 %table
   - @kingdom.buildings_available.to_hash.each_pair do |building_type, building_quantity|
   - building = Building.new(building_type)
+  - queue_count = @build_queue[building_type].nil? ? [0, 0] : [@build_queue[building_type][0], @build_queue[building_type][1]]
   - can_be_built_on = building.buildable_on.to_a.join(',')
   - next if can_be_built_on == ''
     %tr
-      %th= building_type
       %td
-        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :can_be_built_on => can_be_built_on, :building => building_type.to_s}
-      - if @build_queue[building_type].nil?
-        %td= 0
-      - else
-        %td
-          =@build_queue[building_type][0]
+        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :can_be_built_on => can_be_built_on, :building => building_type.to_s, :alt => building_type.to_s, :title => building_type.to_s}
+        %div{:style => "margin:auto auto"}
+          =queue_count[0]
           %sup
-            =@build_queue[building_type][1]
-      %td
-        %input.add_to_queue{:type => :text, :maxlength => building_quantity.to_s.length, :name => 'building_type_' + building_type.to_s}
-  %tr
-    %td
-    %td
-    %td
-    %td
-      %input.add_to_queue{:type => :button, :value => 'Build'}
+            =queue_count[1]

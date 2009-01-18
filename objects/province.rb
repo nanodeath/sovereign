@@ -43,7 +43,7 @@ class Province < CouchRest::Model
   def initialize(opts)
     super(opts)
     self.people = {:men => [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20], :women => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20]}
-    self.buildings = {:home => 20, :farm => 20, :barren => 60}
+    self.buildings = {:home => 20, :farm => 20, :barren => 60, :fertile => 20}
     self.build_queue = {:buildings => []}
   end
 

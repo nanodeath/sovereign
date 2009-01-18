@@ -159,41 +159,29 @@ $(function(){
             $("#build_queue").append(clone);
             var position = clone.position();
             clone.remove();
-            clone = ui.draggable.clone();
-            clone.insertAfter(ui.draggable)
-            .css({
-              position: "absolute",
-              left: ui.position.left,
-              top: ui.position.top
-            });
             var anim = {
               left: position.left,
               top: position.top
             };
-
-            console.log(clone)
-            //            clone = $("<div>").css({
-            //              position: "absolute",
-            //              left: ui.position.left,
-            //              top: ui.position.top
-            //            }).append(clone);
-            console.log(clone)
-
-            var background = $(ev.target).clone();
-            background.insertAfter(ui.draggable).css({
-              position: "absolute",
+            var bImage = $(ev.target).attr("src");
+            
+            cloneDiv = $("<div />").css({
+              width: 64,
+              height: 64,
+              position: 'absolute',
               left: ui.position.left,
-              top: ui.position.top
-            })
-
-            clone.animate(anim, 1000, function(){
-              $(this).hide();
-              ui.draggable.clone().appendTo("#build_queue");
-            });
-
-            background.animate(anim, 1000, function(){
-//              $(this).hide();
-//              $(ev.target).clone().appendTo("#build_queue");
+              top: ui.position.top,
+              "background-image": "url(" + bImage + ")",
+              display: 'inline-block'
+            }).append(ui.draggable.clone())
+            .insertAfter(ui.draggable)
+            .animate(anim, 1000, function(){
+              cloneDiv.appendTo("#build_queue");
+              cloneDiv.css({
+                position: "",
+                left: "",
+                top: ""
+              });
             });
           }
         });
