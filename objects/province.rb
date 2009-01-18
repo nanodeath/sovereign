@@ -3,6 +3,10 @@ class Province < CouchRest::Model
   CHILD_AGE = 5..15
   ADULT_AGE = 16..50
   ELDERLY_AGE = 51..60
+
+#  def self.building_image(type)
+#    '/img/' + BUILDING_PICTURES[type] + IMAGE_FORMAT
+#  end
   
   key_accessor :kingdom_id
   view_by :kingdom_id
@@ -39,7 +43,7 @@ class Province < CouchRest::Model
   def initialize(opts)
     super(opts)
     self.people = {:men => [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20], :women => [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20]}
-    self.buildings = {:homes => 20, :farms => 20, :barren => 60}
+    self.buildings = {:home => 20, :farm => 20, :barren => 60}
     self.build_queue = {:buildings => []}
   end
 
@@ -162,22 +166,23 @@ end
 get '/province/summary' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
-  haml :'/province/summary', :layout => false
+  report_completion('page_loading', nil, :html => (haml :'/province/summary', :layout => false), :page => 'province_summary')
 end
 
 get '/province/people' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
   @population = @province.population
-  haml :'/province/people', :layout => false
+  report_completion('page_loading', nil, :html => (haml :'/province/people', :layout => false), :page => 'province_people')
 end
 
 get '/province/land' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
+  @kingdom = @province.kingdom
   @buildings = @province.buildings
   @build_queue = @province.build_queue.get_with_order(:buildings)
-  haml :'/province/land', :layout => false
+  report_completion('page_loading', nil, :html => (haml :'/province/land', :layout => false), :page => 'province_land')
 end
 
 post '/province/land/buildings' do
@@ -186,5 +191,5 @@ post '/province/land/buildings' do
   @buildings = @province.buildings
   @build_queue = @province.build_queue.get_with_order(:buildings)
   puts params.inspect
-  report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'land')
+  report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'province_land')
 end

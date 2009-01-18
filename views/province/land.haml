@@ -7,7 +7,20 @@
 %div#people_summary
   %h1
     Your Land
-  %h2
-    Buildings
-  %div.buildings
-    = haml :'/province/land/buildings', :layout => false
+  
+  %div{:style => 'float: left; width:50%'}
+    %h2
+      Buildings
+    %p These are the buildings you already have built.
+    .buildings
+      = haml :'/province/land/buildings', :layout => false
+  %div{:style => 'float: right; width:50%'}
+    %h2
+      Construction targets
+    %p These are things you can place buildings on
+    .construction_targets.inline-block
+      = haml :'/province/land/construction_targets', :layout => false
+  %div.queue
+    %h2
+      Build Queue:
+    %div#build_queue

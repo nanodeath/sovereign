@@ -1,12 +1,10 @@
 %table
-  - @kingdom.buildings_available.to_hash.each_pair do |building_type, building_quantity|
+  - @kingdom.buildings_available.to_hash.merge(@buildings.all).each_pair do |building_type, building_quantity|
   - building = Building.new(building_type)
-  - can_be_built_on = building.buildable_on.to_a.join(',')
-  - next if can_be_built_on == ''
     %tr
       %th= building_type
       %td
-        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :can_be_built_on => can_be_built_on, :building => building_type.to_s}
+        %img.building_image{:src => building.picture, :width => "64px", :height => "64px", :building => building_type.to_s}
       - if @build_queue[building_type].nil?
         %td= 0
       - else

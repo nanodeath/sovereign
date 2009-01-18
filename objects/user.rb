@@ -1,7 +1,7 @@
 require 'digest/sha1'
 
 class User < CouchRest::Model
-  USERNAME_PATTERN = /[^a-zA-Z]/
+  INVALID_USERNAME_PATTERN = /[^a-zA-Z]/
 
   key_reader :username, :salt, :password_hash, :email
   
@@ -19,10 +19,14 @@ class User < CouchRest::Model
   before :save, :salt_hash
   
   def salt_hash
-    self['password_hash'] = Digest::SHA1.hexdigest(self['password_hash'] + self['salt'].to_s)
+    if(!self['salted'])
+      self['salted'] = true
+      self['password_hash'] = Digest::SHA1.hexdigest(self['password_hash'] + self['salt'].to_s)
+    end
   end
   
   def password_matches(password)
+    puts "given password hashes to " + Digest::SHA1.hexdigest(password + self['salt'].to_s) + ", was expecting " + self['password_hash']
     Digest::SHA1.hexdigest(password + self['salt'].to_s) == self['password_hash']
   end
 
@@ -50,13 +54,15 @@ class User < CouchRest::Model
     if user.nil?
       # User not found
       # Remember this is also for registering
-      if(!(opts[:login] =~ USERNAME_PATTERN))
+      if(opts[:login] =~ INVALID_USERNAME_PATTERN)
+        puts "user tried logging in with " + opts[:login]
         raise InvalidUsername
       else
         raise UserNotFound
       end
     elsif not user.password_matches(opts[:password])
       # User found, but wrong password
+      puts "*** Password #{opts[:password]} didn't match"
       raise WrongPassword
     end
     
@@ -77,13 +83,13 @@ class User < CouchRest::Model
       raise InvalidEmail
     elsif opts[:login].empty? || opts[:password].empty?
       raise IncompleteUserDefinition
-    elsif(!(opts[:login] =~ USERNAME_PATTERN))
+    elsif(opts[:login] =~ INVALID_USERNAME_PATTERN)
       raise InvalidUsername
     end
     # Valid email
     salt = '1234'
-
-    user = User.new(:username => opts[:login], :salt => salt, :password_hash => opts[:password], :email => opts[:email])
+    puts "*** Creating new user with #{opts[:login]}, #{opts[:password]}"
+    user = User.new(:username => opts[:login], :salt => salt, :password_hash => opts[:password], :email => opts[:email], :salted => false)
     user.save
 
     user

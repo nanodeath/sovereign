@@ -1,5 +1,5 @@
-@import url("http://yui.yahooapis.com/2.6.0/build/reset-fonts-grids/reset-fonts-grids.css")
-@import url("http://yui.yahooapis.com/2.6.0/build/base/base-min.css")
+@import url("reset-fonts-grids.css")
+@import url("base-min.css")
 
 fieldset
   border: 1px solid black
@@ -26,3 +26,27 @@ table
 div.buildings
   input[type="text"]
     width: 2em
+
+div.construction_targets
+  &.drag_in_process
+    img[building]
+      #border: 4px solid blue
+      opacity: 0.2
+  img[building]
+    border: 4px solid white
+    &.available_build_target
+      border: 4px solid yellow
+      opacity: 0.9
+    &.current_target_valid
+      border: 4px solid green
+      opacity: 1.0
+
+div#build_queue
+  width: 20em
+  border: 1px dashed black
+  height: 64px
+  text-align: left
+  clear: both
+
+.ui-effects-transfer
+  border: 1px solid black

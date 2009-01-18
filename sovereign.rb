@@ -1,8 +1,10 @@
 require 'rubygems'
 $:.unshift File.dirname(__FILE__) + '/sinatra/lib'
 $:.unshift File.dirname(__FILE__) + '/couchrest/lib'
+$:.unshift File.dirname(__FILE__) + '/ranno/lib'
 require 'sinatra'
 require 'couchrest'
+require 'ranno'
 
 load 'configure.rb'
 
@@ -29,6 +31,41 @@ helpers do
     raise ArgumentError unless hash.is_a?(Hash) || hash.respond_to?(:to_json)
     content_type 'text/json', :charset => 'utf-8'
     hash.to_json
+  end
+
+  def stylesheet(ss, type = :css)
+    suffix = (type == :css ? '.css' : '.sass')
+    if(ss.is_a? Array)
+      ss.collect {|s| stylesheet(s, type)}.join("\n")
+    else
+      asset(ss + suffix, :stylesheet)
+    end
+  end
+  
+  def javascript(js)
+    suffix = '.js'
+    if(js.is_a? Array)
+      js.collect {|j| javascript(j)}.join("\n")
+    else
+      asset(js + suffix, :javascript)
+    end
+  end
+
+  def asset(ass, type)
+    case type
+    when :stylesheet
+      ass = '/css/' + ass unless ass[0..3] == 'http'
+      "<link href=\"#{ass}\" type=\"text/css\" rel=\"stylesheet\" />"
+    when :javascript
+      ass = '/js/' + ass unless ass[0..3] == 'http'
+      "<script src=\"#{ass}\" type=\"text/javascript\" rel=\"stylesheet\"></script>"
+    end
+  end
+end
+
+class Array
+  def to_hash(default = 0, flatten=true)
+    (flatten ? self.flatten : self).inject({}) {|memo, n| memo[n] = default; memo}
   end
 end
 
