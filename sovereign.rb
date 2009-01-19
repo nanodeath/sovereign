@@ -75,7 +75,7 @@ get '/css/:sass.sass' do
 end
 
 get '/_:partial' do
-  report_completion(params[:partial], nil, :html => haml("/partials/#{params[:partial]}".to_sym, :layout => false))
+  report_completion(params[:partial], nil, :html => haml("/partials/#{params[:partial]}".to_sym, :layout => false), :page => 'partial')
 end
 
 # load routes

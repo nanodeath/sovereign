@@ -156,7 +156,7 @@ get '/login_status' do
       end
     end
   end
-  json ret
+  report_completion('login_status', nil, ret.merge(:page => 'homepage'))
 end
 
 post '/session/sign_out' do

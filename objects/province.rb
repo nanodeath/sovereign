@@ -166,14 +166,14 @@ end
 get '/province/summary' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
-  report_completion('page_loading', nil, :html => (haml :'/province/summary', :layout => false), :page => 'province_summary')
+  report_completion('summary', nil, :html => (haml :'/province/summary', :layout => false), :page => 'province')
 end
 
 get '/province/people' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
   @population = @province.population
-  report_completion('page_loading', nil, :html => (haml :'/province/people', :layout => false), :page => 'province_people')
+  report_completion('people', nil, :html => (haml :'/province/people', :layout => false), :page => 'province')
 end
 
 get '/province/land' do
@@ -182,7 +182,7 @@ get '/province/land' do
   @kingdom = @province.kingdom
   @buildings = @province.buildings
   @build_queue = @province.build_queue.get_with_order(:buildings)
-  report_completion('page_loading', nil, :html => (haml :'/province/land', :layout => false), :page => 'province_land')
+  report_completion('land', nil, :html => (haml :'/province/land', :layout => false), :page => 'province')
 end
 
 post '/province/land/buildings' do
@@ -190,11 +190,11 @@ post '/province/land/buildings' do
   @province.validate_owner(session[:user_id])
   @buildings = @province.buildings
   @build_queue = @province.build_queue.get_with_order(:buildings)
-  report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'province_land')
+  report_completion('add_to_building_queue', nil, :html => (haml :'/province/land/buildings', :layout => false), :page => 'province')
 end
 
 get '/province/header' do
   @province = Province.get(params[:province])
   @province.validate_owner(session[:user_id])
-  report_completion('province_header', nil, :html => (haml :'/province/header', :layout => false), :page => 'province_all')
+  report_completion('header', nil, :html => (haml :'/province/header', :layout => false), :page => 'province')
 end
